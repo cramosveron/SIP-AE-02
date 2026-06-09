@@ -6,6 +6,7 @@ import com.acompanaeduca.backend.service.EvaluationService;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api/evaluation")
 public class EvaluationController {
