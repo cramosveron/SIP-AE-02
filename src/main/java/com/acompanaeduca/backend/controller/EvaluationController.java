@@ -1,8 +1,13 @@
 package com.acompanaeduca.backend.controller;
 
+import com.acompanaeduca.backend.models.GenerateObservationRequest;
+import com.acompanaeduca.backend.models.GenerateObservationResponse;
 import com.acompanaeduca.backend.models.GenerateQuestionRequest;
 import com.acompanaeduca.backend.models.GenerateQuestionResponse;
 import com.acompanaeduca.backend.service.EvaluationService;
+
+import java.util.List;
+
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,6 +41,27 @@ public class EvaluationController {
         );
 
         return evaluationService.generateQuestions(request);
+    }
+
+    @PostMapping(
+            value = "/observations",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public GenerateObservationResponse generateObservations(@RequestBody GenerateObservationRequest request) {
+        String workName = request == null ? null : normalizeText(request.workName());
+        String submittedWork = request == null ? null : normalizeText(request.submittedWork());
+        String explanation = request == null ? null : normalizeText(request.explanation());
+        List<String> activeParameters = request == null ? null : request.activeParameters();
+
+        GenerateObservationRequest normalizedRequest = new GenerateObservationRequest(
+                workName,
+                submittedWork,
+                explanation,
+                activeParameters
+        );
+
+        return evaluationService.generateObservations(normalizedRequest);
     }
 
     private String normalizeText(String text) {
