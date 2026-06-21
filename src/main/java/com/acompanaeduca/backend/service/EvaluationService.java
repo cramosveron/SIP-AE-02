@@ -1,5 +1,7 @@
 package com.acompanaeduca.backend.service;
 
+import com.acompanaeduca.backend.models.GenerateCorrectionsRequest;   
+import com.acompanaeduca.backend.models.GenerateCorrectionsResponse;
 import com.acompanaeduca.backend.models.GenerateObservationRequest;
 import com.acompanaeduca.backend.models.GenerateObservationResponse;
 import com.acompanaeduca.backend.models.GenerateQuestionRequest;
@@ -10,4 +12,6 @@ public interface EvaluationService {
     GenerateQuestionResponse generateQuestions(GenerateQuestionRequest request);
 
     GenerateObservationResponse generateObservations(GenerateObservationRequest request);
+
+    GenerateCorrectionsResponse generateCorrections(GenerateCorrectionsRequest request);
 }

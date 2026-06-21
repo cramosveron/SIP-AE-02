@@ -12,6 +12,12 @@ import com.openai.models.ChatModel;
 import com.openai.models.responses.Response;
 import com.openai.models.responses.ResponseCreateParams;
 import org.springframework.stereotype.Service;
+import com.acompanaeduca.backend.models.GenerateCorrectionsRequest;
+import com.acompanaeduca.backend.models.GenerateCorrectionsResponse;
+import com.acompanaeduca.backend.models.CorrectionItem;
+import com.fasterxml.jackson.databind.JsonNode;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class EvaluationServiceImpl implements EvaluationService {
@@ -240,4 +246,72 @@ public class EvaluationServiceImpl implements EvaluationService {
             throw new IllegalArgumentException("La explicación supero la cantidad máxima de caracteres.");
         }
     }
+    
+    @Override
+    public GenerateCorrectionsResponse generateCorrections(GenerateCorrectionsRequest request) {
+    if (request == null || request.text() == null || request.text().isBlank()) {
+        throw new IllegalArgumentException("El texto a corregir es requerido");
+    }
+
+    String prompt = """
+            Sos un asistente experto en corrección de textos en español.
+            Analizá el siguiente texto buscando errores ortográficos, gramaticales,
+            de redacción, de claridad, de puntuación y de uso de mayúsculas.
+
+            Devolvé ÚNICAMENTE un JSON válido con este formato exacto, sin texto adicional,
+            sin bloques de código, sin comillas extras:
+            {
+              "correctedText": "<texto corregido completo>",
+              "corrections": [
+                {
+                  "original": "<fragmento original con error>",
+                  "suggestion": "<corrección sugerida>",
+                  "type": "<Ortografía | Gramática | Redacción | Claridad | Mayúsculas | Puntuación>"
+                }
+              ]
+            }
+
+            Si no hay errores, devolvé el texto tal cual con corrections como lista vacía.
+
+            Texto a corregir:
+            %s
+            """.formatted(request.text());
+
+    try {
+        ResponseCreateParams params = ResponseCreateParams.builder()
+                .model(ChatModel.GPT_5_2)
+                .input(prompt)
+                .build();
+
+        Response response = openAIClient.responses().create(params);
+
+        String json = response.output().stream()
+                .flatMap(item -> item.message().stream())
+                .flatMap(message -> message.content().stream())
+                .map(content -> content.asOutputText().text())
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Empty OpenAI response"));
+
+        JsonNode root = objectMapper.readTree(json);
+
+        String correctedText = root.get("correctedText").asText();
+        List<CorrectionItem> corrections = new ArrayList<>();
+
+        JsonNode items = root.get("corrections");
+        if (items != null && items.isArray()) {
+            for (JsonNode item : items) {
+                corrections.add(new CorrectionItem(
+                        item.get("original").asText(),
+                        item.get("suggestion").asText(),
+                        item.get("type").asText()
+                ));
+            }
+        }
+
+        return new GenerateCorrectionsResponse(correctedText, corrections);
+
+    } catch (Exception e) {
+        throw new RuntimeException("No se pudo generar la corrección");
+    }
+}
 }
