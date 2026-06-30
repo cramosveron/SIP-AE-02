@@ -6,6 +6,7 @@ import com.acompanaeduca.backend.models.GenerateObservationRequest;
 import com.acompanaeduca.backend.models.GenerateObservationResponse;
 import com.acompanaeduca.backend.models.GenerateQuestionRequest;
 import com.acompanaeduca.backend.models.GenerateQuestionResponse;
+import com.acompanaeduca.backend.models.StudentWorkResponse;
 
 public interface EvaluationService {
 
@@ -14,4 +15,6 @@ public interface EvaluationService {
     GenerateObservationResponse generateObservations(GenerateObservationRequest request);
 
     GenerateCorrectionsResponse generateCorrections(GenerateCorrectionsRequest request);
+
+    StudentWorkResponse getStudentWork(String courseId, String studentId, String deliveryId);
 }

@@ -4,6 +4,8 @@ import com.acompanaeduca.backend.models.GenerateObservationRequest;
 import com.acompanaeduca.backend.models.GenerateObservationResponse;
 import com.acompanaeduca.backend.models.GenerateQuestionRequest;
 import com.acompanaeduca.backend.models.GenerateQuestionResponse;
+import com.acompanaeduca.backend.models.StudentWorkRequest;
+import com.acompanaeduca.backend.models.StudentWorkResponse;
 import com.acompanaeduca.backend.service.EvaluationService;
 
 import java.util.List;
@@ -20,6 +22,19 @@ public class EvaluationController {
 
     public EvaluationController(EvaluationService evaluationService) {
         this.evaluationService = evaluationService;
+    }
+
+    @PostMapping(
+            value = "/student-work",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public StudentWorkResponse getStudentWork(@RequestBody StudentWorkRequest request) {
+        return evaluationService.getStudentWork(
+                request == null ? null : request.courseId(),
+                request == null ? null : request.studentId(),
+                request == null ? null : request.deliveryId()
+        );
     }
 
     @PostMapping(

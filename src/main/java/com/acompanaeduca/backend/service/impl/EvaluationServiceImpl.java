@@ -4,6 +4,7 @@ import com.acompanaeduca.backend.models.GenerateObservationRequest;
 import com.acompanaeduca.backend.models.GenerateObservationResponse;
 import com.acompanaeduca.backend.models.GenerateQuestionRequest;
 import com.acompanaeduca.backend.models.GenerateQuestionResponse;
+import com.acompanaeduca.backend.models.StudentWorkResponse;
 import com.acompanaeduca.backend.properties.EvaluationProperties;
 import com.acompanaeduca.backend.service.EvaluationService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,6 +19,8 @@ import com.acompanaeduca.backend.models.CorrectionItem;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 @Service
 public class EvaluationServiceImpl implements EvaluationService {
@@ -25,6 +28,7 @@ public class EvaluationServiceImpl implements EvaluationService {
     private final OpenAIClient openAIClient;
     private final ObjectMapper objectMapper;
     private final EvaluationProperties evaluationProperties;
+    private final Map<String, StudentWorkResponse> mockedStudentWorks;
 
     public EvaluationServiceImpl(
             OpenAIClient openAIClient,
@@ -34,8 +38,148 @@ public class EvaluationServiceImpl implements EvaluationService {
         this.openAIClient = openAIClient;
         this.objectMapper = objectMapper;
         this.evaluationProperties = evaluationProperties;
+        this.mockedStudentWorks = Map.of(
+                "course-1/student-1/delivery-1", new StudentWorkResponse(
+                        "course-1",
+                        "student-1",
+                        "delivery-1",
+                        "TP — Algoritmos de ordenamiento",
+                        """
+                                def bubble_sort(lista):
+                                    n = len(lista)
+
+                                    for i in range(n):
+                                        for j in range(0, n - 1):
+                                            if lista[j] > lista[j + 1]:
+                                                lista[j], lista[j + 1] = lista[j + 1], lista[j]
+
+                                    return lista
+                                """,
+                        """
+                                El algoritmo de ordenamiento burbuja compara pares consecutivos e intercambia los elementos si están fuera de orden.
+                                En el peor caso, su complejidad temporal es O(n²), aunque funciona bien para listas pequeñas.
+                                """
+                ),
+                "course-1/student-2/delivery-2", new StudentWorkResponse(
+                        "course-1",
+                        "student-2",
+                        "delivery-2",
+                        "Trabajo práctico N° 1",
+                        """
+                                def calcular_promedio(notas):
+                                    return sum(notas) / len(notas)
+                                """,
+                        """
+                                La solución propone una función simple para calcular el promedio de una lista de notas.
+                                El alumno identifica correctamente la necesidad de sumar todos los elementos y dividir por la cantidad total.
+                                """
+                ),
+                "course-1/student-3/delivery-3", new StudentWorkResponse(
+                        "course-1",
+                        "student-3",
+                        "delivery-3",
+                        "Examen parcial",
+                        """
+                                for i in range(10):
+                                    print(i)
+                                """,
+                        """
+                                La respuesta muestra un uso básico de estructuras repetitivas para recorrer una secuencia.
+                                Se observa comprensión del flujo del bucle, aunque podría mejorarse la explicación de su finalidad.
+                                """
+                ),
+                "course-2/student-4/delivery-4", new StudentWorkResponse(
+                        "course-2",
+                        "student-4",
+                        "delivery-4",
+                        "TP — Ecuaciones lineales",
+                        """
+                                2x + 5 = 13
+                                2x = 8
+                                x = 4
+                                """,
+                        """
+                                El estudiante resuelve correctamente la ecuación aplicando operaciones inversas.
+                                La respuesta demuestra comprensión del procedimiento para despejar la variable.
+                                """
+                ),
+                "course-2/student-5/delivery-5", new StudentWorkResponse(
+                        "course-2",
+                        "student-5",
+                        "delivery-5",
+                        "Parcial de álgebra",
+                        """
+                                (a + b)^2 = a^2 + 2ab + b^2
+                                """,
+                        """
+                                Se identifica correctamente la identidad notable y su aplicación.
+                                Podría agregarse un ejemplo concreto para reforzar la explicación.
+                                """
+                ),
+                "course-3/student-7/delivery-6", new StudentWorkResponse(
+                        "course-3",
+                        "student-7",
+                        "delivery-6",
+                        "Práctica — Movimiento rectilíneo",
+                        """
+                                v = d / t
+                                v = 100 / 20
+                                v = 5 m/s
+                                """,
+                        """
+                                El análisis usa la relación entre velocidad, distancia y tiempo de forma correcta.
+                                La explicación podría precisar mejor el significado físico de los resultados.
+                                """
+                ),
+                "course-3/student-8/delivery-7", new StudentWorkResponse(
+                        "course-3",
+                        "student-8",
+                        "delivery-7",
+                        "Trabajo de laboratorio",
+                        """
+                                F = m * a
+                                F = 2 * 3
+                                F = 6 N
+                                """,
+                        """
+                                La resolución muestra una buena comprensión de la segunda ley de Newton.
+                                Se recomienda aclarar las unidades y el contexto del problema.
+                                """
+                )
+        );
     }
 
+
+    @Override
+    public StudentWorkResponse getStudentWork(String courseId, String studentId, String deliveryId) {
+        String key = String.format(Locale.ROOT, "%s/%s/%s", normalizeValue(courseId), normalizeValue(studentId), normalizeValue(deliveryId));
+        return mockedStudentWorks.getOrDefault(
+                key,
+                new StudentWorkResponse(
+                        normalizeValue(courseId),
+                        normalizeValue(studentId),
+                        normalizeValue(deliveryId),
+                        "TP — Algoritmos de ordenamiento",
+                        "def bubble_sort(lista):\n" + //
+                        "        n = len(lista)\n" + //
+                        "\n" + //
+                        "        for i in range(n):\n" + //
+                        "            for j in range(0, n-1):\n" + //
+                        "                if lista[j] > lista[j+1]:\n" + //
+                        "                    lista[j], lista[j+1] = lista[j+1], lista[j]\n" + //
+                        "\n" + //
+                        "        return lista\n" //
+                        ,
+                        "El algoritmo de ordenamiento burbuja es un método de clasificación simple que funciona " +
+                        "comparando repetidamente elementos adyacentes e intercambiándolos si están en el orden incorrecto, " +
+                        "con una complejidad temporal de O(n²) en el peor caso."
+                )
+        );
+    }
+
+    private String normalizeValue(String value) {
+        return value == null || value.isBlank() ? "default" : value;
+    }
 
     @Override
     public GenerateQuestionResponse generateQuestions(GenerateQuestionRequest request) {
