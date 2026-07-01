@@ -35,7 +35,7 @@ public class EvaluationController {
         return evaluationService.getStudentWork(
                 request == null ? null : request.courseId(),
                 request == null ? null : request.studentId(),
-                request == null ? null : request.deliveryId()
+                request == null ? null : request.deliveryName()
         );
     }
 

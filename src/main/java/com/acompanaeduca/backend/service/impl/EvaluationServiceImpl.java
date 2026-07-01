@@ -20,7 +20,6 @@ import com.acompanaeduca.backend.models.CorrectionItem;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 @Service
@@ -41,7 +40,7 @@ public class EvaluationServiceImpl implements EvaluationService {
         this.objectMapper = objectMapper;
         this.evaluationProperties = evaluationProperties;
         this.mockedStudentWorks = Map.of(
-                "course-1/student-1/delivery-1", new StudentWorkResponse(
+                "TP — Algoritmos de ordenamiento", new StudentWorkResponse(
                         "course-1",
                         "student-1",
                         "delivery-1",
@@ -62,7 +61,7 @@ public class EvaluationServiceImpl implements EvaluationService {
                                 En el peor caso, su complejidad temporal es O(n²), aunque funciona bien para listas pequeñas.
                                 """
                 ),
-                "course-1/student-2/delivery-2", new StudentWorkResponse(
+                "Trabajo práctico N° 1", new StudentWorkResponse(
                         "course-1",
                         "student-2",
                         "delivery-2",
@@ -76,7 +75,7 @@ public class EvaluationServiceImpl implements EvaluationService {
                                 El alumno identifica correctamente la necesidad de sumar todos los elementos y dividir por la cantidad total.
                                 """
                 ),
-                "course-1/student-3/delivery-3", new StudentWorkResponse(
+                "Examen parcial", new StudentWorkResponse(
                         "course-1",
                         "student-3",
                         "delivery-3",
@@ -90,7 +89,7 @@ public class EvaluationServiceImpl implements EvaluationService {
                                 Se observa comprensión del flujo del bucle, aunque podría mejorarse la explicación de su finalidad.
                                 """
                 ),
-                "course-2/student-4/delivery-4", new StudentWorkResponse(
+                "TP — Ecuaciones lineales", new StudentWorkResponse(
                         "course-2",
                         "student-4",
                         "delivery-4",
@@ -105,7 +104,7 @@ public class EvaluationServiceImpl implements EvaluationService {
                                 La respuesta demuestra comprensión del procedimiento para despejar la variable.
                                 """
                 ),
-                "course-2/student-5/delivery-5", new StudentWorkResponse(
+                "Parcial de álgebra", new StudentWorkResponse(
                         "course-2",
                         "student-5",
                         "delivery-5",
@@ -118,7 +117,7 @@ public class EvaluationServiceImpl implements EvaluationService {
                                 Podría agregarse un ejemplo concreto para reforzar la explicación.
                                 """
                 ),
-                "course-3/student-7/delivery-6", new StudentWorkResponse(
+                "Práctica — Movimiento rectilíneo", new StudentWorkResponse(
                         "course-3",
                         "student-7",
                         "delivery-6",
@@ -133,7 +132,7 @@ public class EvaluationServiceImpl implements EvaluationService {
                                 La explicación podría precisar mejor el significado físico de los resultados.
                                 """
                 ),
-                "course-3/student-8/delivery-7", new StudentWorkResponse(
+                "Trabajo de laboratorio", new StudentWorkResponse(
                         "course-3",
                         "student-8",
                         "delivery-7",
@@ -187,14 +186,13 @@ public class EvaluationServiceImpl implements EvaluationService {
 
 
     @Override
-    public StudentWorkResponse getStudentWork(String courseId, String studentId, String deliveryId) {
-        String key = String.format(Locale.ROOT, "%s/%s/%s", normalizeValue(courseId), normalizeValue(studentId), normalizeValue(deliveryId));
+    public StudentWorkResponse getStudentWork(String courseId, String studentId, String deliveryName) {
         return mockedStudentWorks.getOrDefault(
-                key,
+                deliveryName,
                 new StudentWorkResponse(
                         normalizeValue(courseId),
                         normalizeValue(studentId),
-                        normalizeValue(deliveryId),
+                        normalizeValue(deliveryName),
                         "TP — Algoritmos de ordenamiento",
                         "def bubble_sort(lista):\n" + //
                         "        n = len(lista)\n" + //
