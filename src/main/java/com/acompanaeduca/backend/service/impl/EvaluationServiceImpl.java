@@ -5,6 +5,7 @@ import com.acompanaeduca.backend.models.GenerateObservationResponse;
 import com.acompanaeduca.backend.models.GenerateQuestionRequest;
 import com.acompanaeduca.backend.models.GenerateQuestionResponse;
 import com.acompanaeduca.backend.models.StudentWorkResponse;
+import com.acompanaeduca.backend.models.ExerciseWorkResponse;
 import com.acompanaeduca.backend.properties.EvaluationProperties;
 import com.acompanaeduca.backend.service.EvaluationService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,7 +29,8 @@ public class EvaluationServiceImpl implements EvaluationService {
     private final OpenAIClient openAIClient;
     private final ObjectMapper objectMapper;
     private final EvaluationProperties evaluationProperties;
-    private final Map<String, StudentWorkResponse> mockedStudentWorks;
+        private final Map<String, StudentWorkResponse> mockedStudentWorks;
+        private final Map<String, ExerciseWorkResponse> mockedExerciseWorks;
 
     public EvaluationServiceImpl(
             OpenAIClient openAIClient,
@@ -147,6 +149,40 @@ public class EvaluationServiceImpl implements EvaluationService {
                                 """
                 )
         );
+        this.mockedExerciseWorks = Map.of(
+                "TP — Algoritmos de ordenamiento", new ExerciseWorkResponse(
+                        "course-1",
+                        "student-1",
+                        "delivery-1",
+                        "1",
+                        "def bubble_sort(lista):\n    n = len(lista)\n    for i in range(n):\n        for j in range(0, n - 1):\n            if lista[j] > lista[j + 1]:\n                lista[j], lista[j + 1] = lista[j + 1], lista[j]\n    return lista",
+                        "Realizar algoritmo de ordenamiento burbuja y explicar su funcionamiento paso a paso."
+                ),
+                "Trabajo práctico N° 1", new ExerciseWorkResponse(
+                        "course-1",
+                        "student-2",
+                        "delivery-2",
+                        "1",
+                        "def calcular_promedio(notas):\n    return sum(notas) / len(notas)",
+                        "Realizar el cálculo del promedio de las notas y justificar el procedimiento utilizado."
+                ),
+                "Parcial de álgebra", new ExerciseWorkResponse(
+                        "course-2",
+                        "student-5",
+                        "delivery-5",
+                        "1",
+                        "(a + b)^2 = a^2 + 2ab + b^2",
+                        "Resolver la identidad notable del cuadrado de un binomio y explicar su desarrollo paso a paso."
+                ),
+                "TP — Ecuaciones lineales", new ExerciseWorkResponse(
+                        "course-2",
+                        "student-4",
+                        "delivery-4",
+                        "1",
+                        "2x + 5 = 13\n2x = 8\nx = 4",
+                        "Resolver la ecuación lineal y justificar cada paso del procedimiento."
+                )
+        );
     }
 
 
@@ -173,6 +209,23 @@ public class EvaluationServiceImpl implements EvaluationService {
                         "El algoritmo de ordenamiento burbuja es un método de clasificación simple que funciona " +
                         "comparando repetidamente elementos adyacentes e intercambiándolos si están en el orden incorrecto, " +
                         "con una complejidad temporal de O(n²) en el peor caso."
+                )
+        );
+    }
+
+    @Override
+    public ExerciseWorkResponse getExerciseWork(String courseId, String studentId, String deliveryName, String exerciseNumber) {
+        return mockedExerciseWorks.getOrDefault(
+                deliveryName,
+                new ExerciseWorkResponse(
+                        normalizeValue(courseId),
+                        normalizeValue(studentId),
+                        normalizeValue(deliveryName),
+                        normalizeValue(exerciseNumber),
+                        "v = d / t\n"
+                        + "v = 100 / 20\n"
+                        + "v = 5 m/s",
+                        "Calcular la velocidad media a partir de los datos de distancia y tiempo presentados."
                 )
         );
     }
@@ -359,14 +412,6 @@ public class EvaluationServiceImpl implements EvaluationService {
         if (request.studentText() == null || request.studentText().isBlank()) {
             throw new IllegalArgumentException("El texto del estudiante es requerido");
         }
-
-        if (request.studentText().length() < evaluationProperties.getText().getMinLength()) {
-            throw new IllegalArgumentException("El texto del estudiante es demasiado corto para generar preguntas.");
-        }
-
-        if (request.studentText().length() > evaluationProperties.getText().getMaxLength()) {
-            throw new IllegalArgumentException("El texto del estudiante supero la cantidad máxima de caracteres.");
-        }
     }
 
     private void validateObservationRequest(GenerateObservationRequest request) {
@@ -376,18 +421,6 @@ public class EvaluationServiceImpl implements EvaluationService {
 
         if (request.submittedWork() == null || request.submittedWork().isBlank()) {
             throw new IllegalArgumentException("El desarrollo entregado por el alumno es requerido");
-        }
-
-        if (request.submittedWork().length() < evaluationProperties.getText().getMinLength()) {
-            throw new IllegalArgumentException("El desarrollo entregado es demasiado corto para generar observaciones.");
-        }
-
-        if (request.submittedWork().length() > evaluationProperties.getText().getMaxLength()) {
-            throw new IllegalArgumentException("El desarrollo entregado supero la cantidad máxima de caracteres.");
-        }
-
-        if (request.explanation() != null && request.explanation().length() > evaluationProperties.getText().getMaxLength()) {
-            throw new IllegalArgumentException("La explicación supero la cantidad máxima de caracteres.");
         }
     }
     
