@@ -71,8 +71,8 @@ public class EvaluationServiceImpl implements EvaluationService {
                                     return sum(notas) / len(notas)
                                 """,
                         """
-                                La solución propone una función simple para calcular el promedio de una lista de notas.
-                                El alumno identifica correctamente la necesidad de sumar todos los elementos y dividir por la cantidad total.
+                                Se utilizó una función simple para calcular el promedio de una lista de notas.
+                                El método consiste en sumar todos los elementos y dividir por la cantidad total.
                                 """
                 ),
                 "Examen parcial", new StudentWorkResponse(
@@ -85,8 +85,7 @@ public class EvaluationServiceImpl implements EvaluationService {
                                     print(i)
                                 """,
                         """
-                                La respuesta muestra un uso básico de estructuras repetitivas para recorrer una secuencia.
-                                Se observa comprensión del flujo del bucle, aunque podría mejorarse la explicación de su finalidad.
+                                Se utilizó un algoritmo simple de estructuras repetitivas para recorrer una secuencia.
                                 """
                 ),
                 "TP — Ecuaciones lineales", new StudentWorkResponse(
@@ -100,8 +99,7 @@ public class EvaluationServiceImpl implements EvaluationService {
                                 x = 4
                                 """,
                         """
-                                El estudiante resuelve correctamente la ecuación aplicando operaciones inversas.
-                                La respuesta demuestra comprensión del procedimiento para despejar la variable.
+                                La ecuación fue resuelta aplicando operaciones inversas, con este procedimiento puedo despejar la variable y encontrar su valor.
                                 """
                 ),
                 "Parcial de álgebra", new StudentWorkResponse(
@@ -113,8 +111,7 @@ public class EvaluationServiceImpl implements EvaluationService {
                                 (a + b)^2 = a^2 + 2ab + b^2
                                 """,
                         """
-                                Se identifica correctamente la identidad notable y su aplicación.
-                                Podría agregarse un ejemplo concreto para reforzar la explicación.
+                                La expresión se conoce como el binomio de suma al cuadrado. Significa que cuando sumas dos cantidades y elevas el resultado al cuadrado, el total es igual al cuadrado del primer número, más el doble de la multiplicación de ambos números, más el cuadrado del segundo número.
                                 """
                 ),
                 "Práctica — Movimiento rectilíneo", new StudentWorkResponse(
@@ -128,8 +125,8 @@ public class EvaluationServiceImpl implements EvaluationService {
                                 v = 5 m/s
                                 """,
                         """
-                                El análisis usa la relación entre velocidad, distancia y tiempo de forma correcta.
-                                La explicación podría precisar mejor el significado físico de los resultados.
+                                Se utilizó la relación entre velocidad, distancia y tiempo.
+                                Con esta fórmula podemos calcular la velocidad promedio de un objeto en movimiento.
                                 """
                 ),
                 "Trabajo de laboratorio", new StudentWorkResponse(
@@ -143,8 +140,7 @@ public class EvaluationServiceImpl implements EvaluationService {
                                 F = 6 N
                                 """,
                         """
-                                La resolución muestra una buena comprensión de la segunda ley de Newton.
-                                Se recomienda aclarar las unidades y el contexto del problema.
+                                Se aplicó la segunda ley de Newton, la cual establece que la fuerza neta aplicada a un objeto es directamente proporcional al producto de su masa por la aceleración que adquiere.
                                 """
                 )
         );
